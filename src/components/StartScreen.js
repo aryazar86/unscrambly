@@ -44,7 +44,7 @@ export const StartScreen = ({ leadTime, setLeadtime, start }) => (
             </li>
             <li>
               If you want to guess multiple words, separate them with a comma
-              (,). If each word is correct, you points total for that round is
+              (,). If each word is correct, your points total for that round is
               multiplied by the number of words guessed.{' '}
             </li>
             <li>

@@ -49,6 +49,8 @@ export const PlayScreen = ({
       onChange={(e) => setWord(e.target.value.toLowerCase())}
       onKeyUp={(e) => e.key === 'Enter' && enterPressed()}
       autoFocus
+      autoComplete="off"
+      spellCheck={false}
     />
     {incorrect.length > 0 && (
       <p className="alert alert-warning" role="alert">

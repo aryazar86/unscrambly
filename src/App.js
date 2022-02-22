@@ -45,8 +45,6 @@ const App = () => {
         } else {
           clearInterval(timer);
           setGameStatus(gameStatuses.End);
-          console.log('time', highScoreCookie.time < timeElapsed);
-          console.log('score', highScoreCookie.score < score);
           if (
             highScoreCookie.time < timeElapsed ||
             highScoreCookie.score < score
@@ -167,8 +165,8 @@ const App = () => {
       style={{ backgroundImage: "url('https://picsum.photos/600')" }}
     >
       <div className="container text-center my-5 game">
-        <div className="row">
-          <div className="col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+        <div className="row justify-content-center">
+          <div className="col-sm-10 col-md-8 col-lg-6 col-xl-5">
             <div className="game__card card shadow-lg">
               <div className="card-body">
                 <h1 className="display-6 pt-4 pb-3">Unscramb.ly</h1>
