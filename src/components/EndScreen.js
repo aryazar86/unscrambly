@@ -9,9 +9,9 @@ export const EndScreen = ({ guesses, score, restart }) => (
             <strong>Guesses</strong>
           </small>
           <div className="game__guesses">
-            <div class="row">
-              {guesses.map((guess) => (
-                <div class="col-3">
+            <div className="row">
+              {guesses.map((guess, index) => (
+                <div className="col-3" key={'guess-' + index}>
                   <small>{guess}</small>
                 </div>
               ))}

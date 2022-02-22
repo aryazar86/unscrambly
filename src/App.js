@@ -4,17 +4,10 @@ import { StartScreen } from './components/StartScreen';
 import { PlayScreen } from './components/PlayScreen';
 import { EndScreen } from './components/EndScreen';
 
-const createEnum = (values) => {
-  const enumObject = {};
-  for (const val of values) {
-    enumObject[val] = val;
-  }
-  return Object.freeze(enumObject);
-};
+import { gameStatuses, errorMessages } from './constants';
+import { randomizeLetters } from './utils';
 
 const App = () => {
-  const gameStatuses = createEnum(['New', 'Ongoing', 'End']);
-
   const [gameStatus, setGameStatus] = useState(gameStatuses.New);
   const [leadTime, setLeadtime] = useState(12);
   const [word, setWord] = useState('');
@@ -43,7 +36,7 @@ const App = () => {
   const start = () => {
     setTimeLeft(leadTime);
     setGameStatus(gameStatuses.Ongoing);
-    randomizeLetters();
+    getNewLetters();
   };
 
   const restart = () => {
@@ -56,23 +49,19 @@ const App = () => {
     setTimeLeft(12);
   };
 
-  const randomizeLetters = () => {
-    const shuffledvowels = [...'aeiouy'].sort(() => 0.5 - Math.random());
-    const shuffledConsonants = [...'bcdfghjklmnpqrstvwxz'].sort(
-      () => 0.5 - Math.random()
-    );
-
+  const getNewLetters = () => {
+    const randoms = randomizeLetters();
     setLetters(
-      shuffledConsonants
+      randoms.consonants
         .slice(0, 4)
-        .concat(shuffledvowels.slice(0, 2))
+        .concat(randoms.vowels.slice(0, 2))
         .sort(() => 0.5 - Math.random())
     );
   };
 
   const thankYouNext = () => {
     setIncorrect('');
-    randomizeLetters();
+    getNewLetters();
     setWord('');
   };
 
@@ -90,14 +79,14 @@ const App = () => {
             [...wordToTry].filter((w) => letters.indexOf(w) === -1).length > 0
           ) {
             setTimeLeft((timeLeft) => timeLeft - 1);
-            setIncorrect('Wrong letter used');
+            setIncorrect(errorMessages.incorrectLetter);
             stillCorrect = false;
           } else {
             await fetch(
               `//api.dictionaryapi.dev/api/v2/entries/en/${wordToTry}`
             ).then((res) => {
               if (!res.ok) {
-                setIncorrect('One of these is not a word');
+                setIncorrect(errorMessages.oneIncorrectWord);
                 setTimeLeft((timeLeft) => timeLeft - 1);
                 stillCorrect = false;
               }
@@ -120,12 +109,12 @@ const App = () => {
     } else {
       if ([...word].filter((w) => letters.indexOf(w) === -1).length > 0) {
         setTimeLeft((timeLeft) => timeLeft - 1);
-        setIncorrect('Wrong letter used');
+        setIncorrect(errorMessages.incorrectLetter);
       } else {
         await fetch(`//api.dictionaryapi.dev/api/v2/entries/en/${word}`).then(
           (res) => {
             if (!res.ok) {
-              setIncorrect('This is not a word');
+              setIncorrect(errorMessages.incorrectWord);
               setTimeLeft((timeLeft) => timeLeft - 1);
             } else {
               setGuesses((prev) => [...prev, word]);
