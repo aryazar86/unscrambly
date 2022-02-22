@@ -1,6 +1,12 @@
 import React from 'react';
 
-export const EndScreen = ({ guesses, score, restart }) => (
+export const EndScreen = ({
+  guesses,
+  highscore,
+  restart,
+  timeElapsed,
+  prevScore,
+}) => (
   <>
     <div className="row mb-3 py-2 border-top border-bottom">
       {guesses.length > 0 && (
@@ -19,12 +25,20 @@ export const EndScreen = ({ guesses, score, restart }) => (
           </div>
         </div>
       )}
-      <div className="col-12 text-center">
+      <div className="col-6 text-center">
         <small>
           <strong>Final Score</strong>
         </small>
         <div>
-          <small>{score}</small>
+          <small>{highscore.score}</small>
+        </div>
+      </div>
+      <div className="col-6 text-center">
+        <small>
+          <strong>Time Elapsed</strong>
+        </small>
+        <div>
+          <small>{highscore.time}</small>
         </div>
       </div>
     </div>

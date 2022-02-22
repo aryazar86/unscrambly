@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import './App.scss';
-import { StartScreen } from './components/StartScreen';
-import { PlayScreen } from './components/PlayScreen';
+import React, { useEffect, useState, useRef } from 'react';
+
 import { EndScreen } from './components/EndScreen';
+import { PlayScreen } from './components/PlayScreen';
+import { StartScreen } from './components/StartScreen';
 
 import { gameStatuses, errorMessages } from './constants';
-import { randomizeLetters } from './utils';
+import { getCookie, setCookie, randomizeLetters } from './utils';
+
+import './App.scss';
 
 const App = () => {
   const [gameStatus, setGameStatus] = useState(gameStatuses.New);
@@ -16,6 +18,20 @@ const App = () => {
   const [score, setScore] = useState(0);
   const [letters, setLetters] = useState([]);
   const [timeLeft, setTimeLeft] = useState(12);
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [highScoreCookie, setHighScoreCookie] = useState({ time: 0, score: 0 });
+  const prevScore = useRef({});
+
+  useEffect(() => {
+    const highScore = getCookie('unscrambly_highscore');
+    if (highScore) {
+      setHighScoreCookie(highScore);
+    }
+  }, []);
+
+  useEffect(() => {
+    prevScore.current = highScoreCookie;
+  }, [highScoreCookie]);
 
   useEffect(() => {
     let timer = null;
@@ -23,9 +39,17 @@ const App = () => {
       timer = setInterval(() => {
         if (timeLeft > 0) {
           setTimeLeft(timeLeft - 1);
+          setTimeElapsed(timeElapsed + 1);
         } else {
           clearInterval(timer);
           setGameStatus(gameStatuses.End);
+          if (
+            highScoreCookie.time < timeElapsed ||
+            highScoreCookie.score < score
+          ) {
+            setHighScoreCookie({ time: timeElapsed, score: score });
+            setCookie('unscrambly_highscore', highScoreCookie);
+          }
         }
       }, 1000);
     }
@@ -159,7 +183,9 @@ const App = () => {
                 ) : (
                   <EndScreen
                     guesses={guesses}
-                    score={score}
+                    highScore={highScoreCookie}
+                    timeElapsed={timeElapsed}
+                    prevScore={prevScore}
                     restart={restart}
                   />
                 )}
