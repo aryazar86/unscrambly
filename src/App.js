@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './App.scss';
+import { StartScreen } from './components/StartScreen';
+import { PlayScreen } from './components/PlayScreen';
+import { EndScreen } from './components/EndScreen';
 
 const createEnum = (values) => {
   const enumObject = {};
@@ -149,85 +152,27 @@ const App = () => {
               <div className="card-body">
                 <h1 className="display-6 pt-4 pb-3">Unscramb.ly</h1>
                 {gameStatus === gameStatuses.New ? (
-                  <>
-                    <label htmlFor="leadTime" className="form-label">
-                      <strong>Lead time is {leadTime} seconds</strong>
-                    </label>
-                    <input
-                      type="range"
-                      className="mb-3 form-range"
-                      min="4"
-                      max="20"
-                      value={leadTime}
-                      onChange={(e) => setLeadtime(e.target.value)}
-                      id="leadTime"
-                      autoFocus={true}
-                    />
-                    <button
-                      className="btn btn-primary btn-block btn-lg"
-                      onClick={() => start()}
-                    >
-                      Let's do it
-                    </button>
-                  </>
+                  <StartScreen
+                    leadTime={leadTime}
+                    setLeadtime={setLeadtime}
+                    start={start}
+                  />
                 ) : gameStatus === gameStatuses.Ongoing ? (
-                  <>
-                    <div className="row mb-3 py-2 border-top border-bottom">
-                      <div className="col-6 text-center">
-                        <small>
-                          <strong>Time</strong>
-                        </small>
-                        <div>
-                          <small>
-                            {timeLeft} second{timeLeft !== 1 && 's'}
-                          </small>
-                        </div>
-                      </div>
-                      <div className="col-6 text-center">
-                        <small>
-                          <strong>Score</strong>
-                        </small>
-                        <div>
-                          <small>{score}</small>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row mx-0 mb-1">
-                      {letters.map((l, i) => (
-                        <div
-                          key={`letter-${i}`}
-                          className={`col text-center border py-2 h3 ${
-                            i % 2 !== 0 && 'bg-light'
-                          }`}
-                        >
-                          <strong>{l.toUpperCase()}</strong>
-                        </div>
-                      ))}
-                    </div>
-                    <input
-                      type="text"
-                      className="form-control border border-primary"
-                      value={word}
-                      onChange={(e) => setWord(e.target.value.toLowerCase())}
-                      onKeyUp={(e) => e.key === 'Enter' && enterPressed()}
-                    />
-                    {incorrect.length > 0 && (
-                      <p className="alert alert-warning" role="alert">
-                        {incorrect}
-                      </p>
-                    )}
-                  </>
+                  <PlayScreen
+                    timeLeft={timeLeft}
+                    score={score}
+                    letters={letters}
+                    word={word}
+                    setWord={setWord}
+                    enterPressed={enterPressed}
+                    incorrect={incorrect}
+                  />
                 ) : (
-                  <>
-                    <p>Guesses: {guesses.join(', ')}</p>
-                    <h3>Your final score: {score}</h3>
-                    <button
-                      className="btn btn-success bt-lg"
-                      onClick={() => restart()}
-                    >
-                      Try again
-                    </button>
-                  </>
+                  <EndScreen
+                    guesses={guesses}
+                    score={score}
+                    restart={restart}
+                  />
                 )}
               </div>
             </div>
