@@ -25,7 +25,9 @@ const App = () => {
   useEffect(() => {
     const highScore = getCookie('unscrambly_highscore');
     if (highScore) {
-      setHighScoreCookie(highScore);
+      setHighScoreCookie(JSON.parse(highScore));
+    } else {
+      setCookie('unscrambly_highscore', JSON.stringify(highScoreCookie));
     }
   }, []);
 
@@ -38,17 +40,22 @@ const App = () => {
     if (gameStatus === gameStatuses.Ongoing) {
       timer = setInterval(() => {
         if (timeLeft > 0) {
+          setTimeElapsed((prev) => prev + 1);
           setTimeLeft(timeLeft - 1);
-          setTimeElapsed(timeElapsed + 1);
         } else {
           clearInterval(timer);
           setGameStatus(gameStatuses.End);
+          console.log('time', highScoreCookie.time < timeElapsed);
+          console.log('score', highScoreCookie.score < score);
           if (
             highScoreCookie.time < timeElapsed ||
             highScoreCookie.score < score
           ) {
             setHighScoreCookie({ time: timeElapsed, score: score });
-            setCookie('unscrambly_highscore', highScoreCookie);
+            setCookie(
+              'unscrambly_highscore',
+              JSON.stringify({ time: timeElapsed, score: score })
+            );
           }
         }
       }, 1000);
@@ -71,6 +78,7 @@ const App = () => {
     setScore(0);
     setLetters([]);
     setTimeLeft(12);
+    setTimeElapsed(0);
   };
 
   const getNewLetters = () => {
@@ -183,9 +191,10 @@ const App = () => {
                 ) : (
                   <EndScreen
                     guesses={guesses}
-                    highScore={highScoreCookie}
+                    score={score}
                     timeElapsed={timeElapsed}
                     prevScore={prevScore}
+                    highScoreCookie={highScoreCookie}
                     restart={restart}
                   />
                 )}
